@@ -12,6 +12,7 @@ sbit P2_2=P2^2;
 sbit P2_3=P2^3;
 uint dat,volt;
 uchar table[]={0xC0,0xF9,0xA4,0xB0,0x99,0x92,0x82,0xF8,0x80,0x90}; //共阳
+uchar table2[]={0x40,0x79,0x24,0x30,0x19,0x12,0x02,0x78,0x00,0x10};	 //带小数点
 void delayms(uint ms)
 {
 	uchar j;
@@ -33,11 +34,12 @@ void ADC_read()
 void display(uint dat)
 {
 	P2_0=1;P2_1=0;P2_2=0;P2_3=0;   //开第一个数码管位选，后面类似
-	P0=table[dat/1000];	  
+	P0=table2[dat/100]; 
+	 
 	delayms(1);
 	P0=0xFF;			 //消隐
 	P2_0=0;P2_1=1;P2_2=0;P2_3=0;
-	P0=table[dat/100%10];
+	P0=table[dat%100/10];
 	delayms(1);
 	P0=0xFF;
 	P2_0=0;P2_1=0;P2_2=1;P2_3=0;
@@ -68,7 +70,7 @@ void main(void)
 	while(1)
 	{
 		ADC_read();	//读取数值
-		display(1.96*dat);	//显示
+		display(1.96*dat);	//显示		 1.96=2/255
 
 	}
 }
