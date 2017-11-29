@@ -1,0 +1,39 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\TIM-download\贪食蛇游戏\源代码\SNAKE.uvproj
+Project File Date:  11/28/2017
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling SNAKE.C...
+SNAKE.C(25): error C141: syntax error near 'H'
+SNAKE.C(27): error C141: syntax error near '{'
+SNAKE.C(28): error C231: 'i': redefinition
+SNAKE.C(29): error C141: syntax error near 'for'
+SNAKE.C(29): error C141: syntax error near '=', expected ')'
+SNAKE.C(29): error C129: missing ';' before '>'
+Target not created
+Build target 'Target 1'
+compiling SNAKE.C...
+linking...
+Program Size: data=80.1 xdata=0 code=897
+creating hex file from "SNAKE"...
+"SNAKE" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling SNAKE.C...
+SNAKE.C(25): error C141: syntax error near 'H'
+SNAKE.C(27): error C141: syntax error near '{'
+SNAKE.C(28): error C231: 'i': redefinition
+SNAKE.C(29): error C141: syntax error near 'for'
+SNAKE.C(29): error C141: syntax error near '=', expected ')'
+SNAKE.C(29): error C129: missing ';' before '>'
+Target not created
+Build target 'Target 1'
+compiling SNAKE.C...
+linking...
+Program Size: data=70.1 xdata=0 code=883
+creating hex file from "SNAKE"...
+"SNAKE" - 0 Error(s), 0 Warning(s).

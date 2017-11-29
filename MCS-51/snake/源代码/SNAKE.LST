@@ -1,0 +1,218 @@
+C51 COMPILER V9.00   SNAKE                                                                 11/28/2017 23:49:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE SNAKE
+OBJECT MODULE PLACED IN SNAKE.OBJ
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE SNAKE.C BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          #include<reg52.h>
+   3          #define uint unsigned int
+   4          #define uchar unsigned char
+   5          #define KEY  P3                                                                           //键盘端口
+   6          #define LIE  P2                                                                           //列选端口 
+   7          #define HANG P0                                                                           //行选端口
+   8          #define SLONG 10                                                                          //蛇的最大长度
+   9          sbit UP   =P3^0;                                                                          //上
+  10          sbit DOWN =P3^1;                                                                          //下
+  11          sbit RIGHT=P3^2;                                                                          //右
+  12          sbit LEFT =P3^3;                                                                          //左
+  13          int   temp,i,s;                                                                           //定义temp用于读取端口数据，i用于循环,s用于果实的随机显示
+  14          uchar X[SLONG+1];                                                                         //定义数据存放小蛇的横坐标
+  15          uchar Y[SLONG+1];
+  16          uchar  SL;
+  17          uchar  v;
+  18          char   add_x,add_y;
+  19          uchar TABLE1[] ={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01,0x00}; //列
+  20          uchar TABLE2[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe,0x00};  //行
+  21          uchar TABLE3[]={0x7e,0xbd,0xdb,0xe7,0xe7,0xdb,0xbd,0x7e,0x00};  //行
+  22          sbit stop = P1^7;
+  23          
+  24          
+  25            void delay(int ms)
+  26            {
+  27   1         int i,j;
+  28   1         for(i=ms;i>0;i--)
+  29   1             for(j=110;j>0;j--);
+  30   1        }
+  31          
+  32            void keyscan()
+  33            {
+  34   1        if(UP==0)                                                        //片段上按键被按下
+  35   1        {
+  36   2          add_x=0;                                               //去除x轴的偏移
+  37   2                if(add_y!=-1)                                    //检查是否有反方向的偏移
+  38   2                {
+  39   3                   add_y=1;                                      //没有就改变偏移方向
+  40   3                }  
+  41   2        }
+  42   1        if(DOWN==0)
+  43   1        {
+  44   2         add_x=0;
+  45   2                if(add_y!=1)
+  46   2                {
+  47   3                   add_y=-1;
+  48   3                }
+  49   2        }
+  50   1        if(RIGHT==0)
+  51   1        {
+  52   2         add_y=0;
+  53   2                if(add_x!=-1)
+  54   2                {
+  55   3                   add_x=1;
+C51 COMPILER V9.00   SNAKE                                                                 11/28/2017 23:49:40 PAGE 2   
+
+  56   3                }
+  57   2        }
+  58   1        if(LEFT==0)
+  59   1        {
+  60   2          add_y=0;
+  61   2                if(add_x!=1)
+  62   2                {
+  63   3                   add_x=-1;
+  64   3                }
+  65   2        }
+  66   1        }
+  67          
+  68            void display(int a)
+  69            {
+  70   1         while(a--)                                              //通过循环的次数控制，小蛇前进的速度
+  71   1         {
+  72   2         for(i=0;i<SLONG+1;i++)                          //通过循环显示小蛇的所有部分
+  73   2            {
+  74   3                 LIE=TABLE1[X[i]];                               //列坐标
+  75   3                 HANG=TABLE2[Y[i]];                      //行坐标
+  76   3                 keyscan();                                      //键盘扫描程序
+  77   3                 delay(1);                                       //延时1ms
+  78   3                 LIE=0X00;                                       //关闭点阵再重新开启，防止产生重影
+  79   3                 HANG=0XFF;                                      //关闭点阵再重新开启，防止产生重影
+  80   3                }
+  81   2         }  
+  82   1        }
+  83          
+  84          
+  85            void unit()
+  86            {
+  87   1         HANG=0XFF;                                              //先关闭点阵
+  88   1         LIE =0X00;                                              
+  89   1         KEY =0XFF;                                              //在51中没有专用的读取寄存器，所以在读取之前要将端口给高电平，才能读到正确的结果
+  90   1         v   =50;                                                        //通过这个形参控制小蛇的速度,s实参在显示函数中
+  91   1         for(i=3;i<SLONG+1;i++)                          //给没有小蛇和食物的地方关闭显示
+  92   1         {
+  93   2             X[i]=8;
+  94   2             Y[i]=8;
+  95   2         }
+  96   1         X[0]=5;                                                         //初始化食物的位置横坐标
+  97   1         Y[0]=3;                                                         //初始化食物的位置纵坐标
+  98   1         SL  =2;                                                         //初始化蛇的长
+  99   1         X[1]=0;                                                         //初始化蛇头的横坐标
+ 100   1         Y[1]=2;                                                         //初始化蛇头的纵坐标
+ 101   1         X[2]=0;                                                         //初始化蛇尾的横坐标
+ 102   1         Y[2]=1;                                                         //初始化蛇尾的纵坐标
+ 103   1         add_x=0;                                                        //初始化X轴偏移为0
+ 104   1         add_y=0;                                                        //初始化Y轴偏移为0
+ 105   1         s =2;                                                           //初始化果实参数
+ 106   1      
+ 107   1      }
+ 108          
+ 109            bit knock()
+ 110            {
+ 111   1        bit k;                                                           //定义一个标志位用于判断是否发生碰撞
+ 112   1        k=0;                                                             //先初始为0，表示未碰撞
+ 113   1        if(X[1]>7||Y[1]>7)k=1;                           //蛇头对应的横或纵坐标为7时撞墙，K=1表示撞墙
+ 114   1        for(i=2;i<SL+1;i++)                              //蛇头坐标与蛇尾坐标相等的时候撞自己
+ 115   1        {                                                                        //身体有几段就要检测几次
+ 116   2         if(X[1]==X[i]&Y[1]==Y[i])
+ 117   2         k=1;                                                            //撞墙标志
+C51 COMPILER V9.00   SNAKE                                                                 11/28/2017 23:49:40 PAGE 3   
+
+ 118   2        }
+ 119   1        return k;                                                        //返回撞墙的标志
+ 120   1        }
+ 121          
+ 122            void main()
+ 123            {
+ 124   1         unit();                                                         //初始化
+ 125   1         while(1)                                                        //进入循环
+ 126   1         {
+ 127   2                temp=0x0f&KEY;                                   //读取P3端口的值，屏蔽掉高四位
+ 128   2                if(temp!=0x0f)                                   //如果不等于初始值说明有按键按下
+ 129   2            break;                                               //跳出循环
+ 130   2         display(1);                                             //否则就执行显示程序
+ 131   2         }
+ 132   1         while(1)                                                        //进入循环
+ 133   1         {   
+ 134   2         if(knock())                                             //检测碰撞
+ 135   2         {                                                               //如果碰撞则初始化速度，重新开始
+ 136   3         v=50;
+ 137   3         //display()
+ 138   3         while(1){
+ 139   4          int i;
+ 140   4              for(i=0;i<=7;i++){
+ 141   5                 LIE=TABLE1[i];                                  //列坐标
+ 142   5                 HANG=TABLE3[i];                         //行坐标
+ 143   5                 delay(3);
+ 144   5              }
+ 145   4      
+ 146   4         }
+ 147   3      
+ 148   3         }
+ 149   2         display(v);                                             //调用显示函数，显示速度为V
+ 150   2         if((X[0]==X[1]+add_x)&(Y[0]==Y[1]+add_y))       //判断是否吃到果子
+ 151   2              {
+ 152   3              SL++;                                                      //蛇长度加1
+ 153   3              if(SL==SLONG)                                      //如果蛇身长度等于最大长度则过关
+ 154   3              {
+ 155   4               SL=3;                                                     //初始化蛇身长度
+ 156   4               v=v-5;                                            //增加速度
+ 157   4               for(i=3;i<SLONG+1;i++)                    //初始化不显示的区域
+ 158   4            X[i]=8;
+ 159   4           for(i=3;i<SLONG+1;i++)
+ 160   4            Y[i]=8;
+ 161   4              
+ 162   4              }
+ 163   3              s++;                                                       //对食物参数加1，大于4则变为2，用来使果实看起来随机显示
+ 164   3              if(s>4)
+ 165   3                 s=2;
+ 166   3              if(X[1]>4)                                                 //根据蛇头所在的位置，和参数S设置果子的位置
+ 167   3              {
+ 168   4              X[0]=X[1]-s;
+ 169   4              }
+ 170   3              else
+ 171   3              X[0]=X[1]+s;
+ 172   3              if(Y[1]>4)
+ 173   3              {
+ 174   4              Y[0]=Y[1]-s;
+ 175   4              }
+ 176   3              else
+ 177   3              Y[0]=Y[1]+s;
+ 178   3              }
+ 179   2         for(i=SL;i>1;i--)                             //通过对每个块的坐标的重新设置达到移动的目的
+C51 COMPILER V9.00   SNAKE                                                                 11/28/2017 23:49:40 PAGE 4   
+
+ 180   2         {
+ 181   3         X[i]=X[i-1];
+ 182   3         Y[i]=Y[i-1];
+ 183   3         }
+ 184   2         X[1]=X[2]+add_x;
+ 185   2         Y[1]=Y[2]+add_y;                                      //蛇头根据偏移的方向设计
+ 186   2         
+ 187   2         }
+ 188   1        }
+ 189          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    706    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     59       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
